@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마케팅·영업 직무 적합도 탐색지</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: #eef1f5;
+      color: #1f2937;
+      line-height: 1.6;
+    }
+    .page { max-width: 1180px; margin: 0 auto; padding: 32px 20px 60px; }
+    .header, .card {
+      background: #fff;
+      border: 1px solid #d9e0ea;
+      border-radius: 8px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+    .header h1 { margin: 0 0 8px; color: #102a43; font-size: 32px; letter-spacing: 0; }
+    .subtitle { margin: 0 0 18px; color: #52616b; font-size: 17px; font-weight: 700; }
+    .notice {
+      background: #f4f7fb;
+      border-left: 5px solid #315c8a;
+      padding: 16px 18px;
+      border-radius: 6px;
+      margin: 0;
+      color: #314155;
+    }
+    h2 { margin: 0 0 18px; color: #102a43; font-size: 23px; }
+    h3 { margin: 24px 0 12px; color: #244b73; font-size: 18px; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .full { grid-column: 1 / -1; }
+    label { display: block; font-weight: 800; color: #2f3f51; margin-bottom: 7px; }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid #c9d3df;
+      border-radius: 6px;
+      padding: 11px 12px;
+      font-size: 15px;
+      background: #fff;
+      color: #1f2937;
+    }
+    textarea { min-height: 82px; resize: vertical; }
+    .scale-guide {
+      background: #f7f9fc;
+      border: 1px solid #dce4ed;
+      padding: 14px 16px;
+      border-radius: 6px;
+      color: #4b5d70;
+      margin-bottom: 18px;
+    }
+    .question-group, .portfolio-group {
+      border-top: 1px solid #e4e9f0;
+      padding-top: 18px;
+      margin-top: 18px;
+    }
+    .question-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 140px;
+      gap: 16px;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf1f5;
+    }
+    .question-text { font-weight: 650; color: #263445; }
+    .checkbox-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 18px; }
+    .checkbox-item {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid #e1e8f0;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .checkbox-item input { width: auto; margin-top: 5px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin: 28px 0; }
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 12px 18px;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      color: #fff;
+      background: #52616b;
+    }
+    .primary { background: #1f5f99; padding: 14px 26px; font-size: 16px; }
+    .secondary { background: #3b556f; }
+    .reset { background: #7a4f4f; }
+    #resultSection { display: none; }
+    .result-paper {
+      background: #fff;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 42px;
+      border: 1px solid #cfd8e3;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+    .result-paper h2 { margin: 0 0 6px; color: #102a43; font-size: 28px; }
+    .result-paper h3 {
+      margin: 30px 0 12px;
+      color: #173b61;
+      font-size: 20px;
+      border-bottom: 2px solid #d7e2ee;
+      padding-bottom: 6px;
+    }
+    .result-paper h4 { margin: 18px 0 8px; color: #284b63; font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0 18px; font-size: 14px; }
+    th, td { border: 1px solid #cbd5e1; padding: 10px; vertical-align: top; }
+    th { background: #edf3f9; color: #173b61; text-align: left; }
+    .summary-table th { width: 210px; }
+    .bar-row { display: grid; grid-template-columns: 170px 1fr 54px; gap: 12px; align-items: center; margin: 10px 0; }
+    .bar-label { font-weight: 800; color: #263445; }
+    .bar-track { height: 24px; background: #e8eef5; border-radius: 4px; overflow: hidden; border: 1px solid #d5dde8; }
+    .bar-fill { height: 100%; background: #2f6fa5; }
+    .bar-score { font-weight: 800; color: #173b61; text-align: right; }
+    .comment-box {
+      background: #f6f9fc;
+      border: 1px solid #d8e3ee;
+      border-left: 5px solid #2f6fa5;
+      padding: 16px 18px;
+      border-radius: 6px;
+      margin: 14px 0;
+    }
+    .warning-box {
+      background: #fff8e8;
+      border: 1px solid #f1d59a;
+      border-left: 5px solid #c4820f;
+      padding: 16px 18px;
+      border-radius: 6px;
+      margin: 14px 0;
+    }
+    .final-note {
+      margin-top: 28px;
+      padding: 18px;
+      border: 1px solid #cfd8e3;
+      background: #f7f9fc;
+      border-radius: 6px;
+      font-weight: 800;
+      color: #314155;
+    }
+    ul { padding-left: 22px; }
+    @media (max-width: 760px) {
+      .page { padding: 18px 12px 40px; }
+      .header, .card, .result-paper { padding: 20px; }
+      .header h1 { font-size: 25px; }
+      .grid, .checkbox-list { grid-template-columns: 1fr; }
+      .question-row { grid-template-columns: 1fr; gap: 8px; }
+      .bar-row { grid-template-columns: 1fr; gap: 6px; }
+      .bar-score { text-align: left; }
+      table { font-size: 13px; }
+      th, td { padding: 8px; }
+    }
+    @media print {
+      body { background: #fff; }
+      .header, .card, .actions, .no-print { display: none !important; }
+      .page { padding: 0; max-width: none; }
+      #resultSection { display: block !important; }
+      .result-paper {
+        width: 210mm;
+        min-height: 297mm;
+        max-width: none;
+        margin: 0;
+        padding: 18mm;
+        border: 0;
+        box-shadow: none;
+      }
+      table, .comment-box, .warning-box, .bar-row { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="header">
+      <h1>마케팅·영업 직무 적합도 탐색지</h1>
+      <p class="subtitle">성향과 경험, 포트폴리오 준비도를 바탕으로 나에게 맞는 직무 방향을 점검해보는 자기진단 워크시트</p>
+      <p class="notice">
+        이 탐색지는 마케팅·영업 관련 직무 방향을 스스로 점검하고, 상담 전에 자신의 생각을 정리하기 위한 자료입니다.
+        결과는 정답이나 확정 진단이 아니며, PDF로 저장한 뒤 상담자에게 제출해 주세요.
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>1. 기본 정보 입력</h2>
+      <div class="grid">
+        <div><label for="studentName">이름</label><input id="studentName" type="text" /></div>
+        <div><label for="majorCourse">전공 또는 수강 과정</label><input id="majorCourse" type="text" /></div>
+        <div class="full"><label for="consideringJob">현재 고민 중인 직무</label><input id="consideringJob" type="text" placeholder="마케팅, 브랜드 마케팅, 콘텐츠 마케팅, 퍼포먼스 마케팅, 해외영업, 영업지원, 이커머스 운영 등" /></div>
+        <div class="full"><label for="experience">보유 경험</label><textarea id="experience" placeholder="아르바이트, 인턴, 프로젝트, 동아리, SNS 운영, 공모전, 고객응대, 외국어 경험 등"></textarea></div>
+        <div class="full"><label for="skills">보유 역량</label><textarea id="skills" placeholder="영어, 엑셀, 디자인툴, 영상편집, SNS, 문서작성, 고객응대, 데이터 분석 등"></textarea></div>
+        <div><label for="avoidWork">피하고 싶은 업무</label><textarea id="avoidWork"></textarea></div>
+        <div><label for="wantWork">꼭 하고 싶은 업무 또는 관심 있는 업무</label><textarea id="wantWork"></textarea></div>
+        <div class="full"><label for="workStyle">선호하는 업무 방식</label><input id="workStyle" type="text" placeholder="사람을 만나는 일, 콘텐츠를 만드는 일, 숫자를 분석하는 일, 자료를 정리하는 일, 기획하는 일 등" /></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. 직무 성향 체크</h2>
+      <div class="scale-guide">각 문항을 읽고 나에게 가까운 정도를 선택해 주세요. 기본값은 3점입니다.<br />1점 = 전혀 아니다 / 2점 = 아니다 / 3점 = 보통이다 / 4점 = 그렇다 / 5점 = 매우 그렇다</div>
+      <div id="questionArea"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. 마케팅 포트폴리오 준비도 체크</h2>
+      <p class="scale-guide">마케팅 직무는 관심뿐 아니라 실제 보여줄 수 있는 결과물이 중요합니다. 현재 해본 적 있는 항목을 체크해 주세요.</p>
+      <div id="portfolioArea"></div>
+    </section>
+
+    <div class="actions no-print">
+      <button class="primary" onclick="generateResult()">내 결과 확인하기</button>
+      <button class="reset" onclick="resetForm()">다시 작성하기</button>
+    </div>
+
+    <section id="resultSection">
+      <div class="actions no-print">
+        <button class="secondary" onclick="savePdf()">PDF 저장</button>
+        <button class="secondary" onclick="copyResult()">전체 복사</button>
+        <button class="reset" onclick="resetForm()">다시 작성하기</button>
+      </div>
+      <article id="resultPaper" class="result-paper"></article>
+    </section>
+  </main>
+
+  <script>
+    const jobGroups = [
+      { key: "content", name: "콘텐츠 마케팅", questions: ["SNS, 영상, 이미지, 글 등 콘텐츠를 보는 것을 좋아한다.", "트렌드나 유행을 자주 살펴보는 편이다.", "사람들의 반응을 얻는 콘텐츠를 만드는 일에 흥미가 있다.", "광고나 게시물을 볼 때 왜 잘 됐는지 생각해본 적이 있다.", "글, 이미지, 영상 등으로 메시지를 표현하는 일이 재미있을 것 같다."] },
+      { key: "brand", name: "브랜드/기획 마케팅", questions: ["브랜드 이미지, 콘셉트, 타깃 고객을 생각하는 일이 흥미롭다.", "제품이나 서비스가 어떤 사람에게 어울릴지 고민해본 적이 있다.", "시장조사, 경쟁사 분석, 아이디어 정리에 관심이 있다.", "캠페인이나 프로모션을 기획하는 일이 재미있을 것 같다.", "단순 판매보다 브랜드의 방향성과 메시지를 만드는 일이 끌린다."] },
+      { key: "performance", name: "퍼포먼스/CRM 마케팅", questions: ["숫자나 결과 데이터를 보고 원인을 찾는 일이 싫지 않다.", "광고 성과, 클릭률, 전환율 같은 지표를 배워볼 의향이 있다.", "감보다 근거를 보고 판단하는 편이다.", "결과를 보고 개선점을 찾는 과정이 흥미롭다.", "엑셀, GA4, 광고관리자 같은 도구를 배워볼 수 있다."] },
+      { key: "globalSales", name: "해외영업", questions: ["외국어를 실제 업무에서 사용하고 싶다.", "해외 문화나 해외 시장에 관심이 있다.", "새로운 사람이나 거래처와 소통하는 일이 크게 부담스럽지 않다.", "거절이나 변수 상황이 있어도 다시 시도할 수 있는 편이다.", "납기, 견적, 발주, 클레임 등 조율 업무도 해볼 수 있다.", "매출 목표나 성과 압박이 어느 정도 있어도 감당할 수 있다."] },
+      { key: "operation", name: "영업지원/마케팅운영", questions: ["일정 관리, 자료 정리, 문서 작성이 크게 부담스럽지 않다.", "꼼꼼하게 확인하고 빠뜨리지 않는 편이다.", "여러 사람 사이에서 업무를 조율하는 역할이 괜찮다.", "눈에 띄는 창작보다 일이 문제없이 돌아가게 만드는 역할도 괜찮다.", "처음부터 기획자나 마케터로 시작하기보다 운영/지원 업무부터 경험해도 괜찮다."] }
+    ];
+
+    const jobShortInterpretations = {
+      content: "콘텐츠 제작, SNS 트렌드, 소비자 반응 관찰과 관련된 성향을 보여줍니다.",
+      brand: "브랜드 콘셉트, 시장조사, 캠페인 기획에 대한 관심을 보여줍니다.",
+      performance: "데이터 기반 분석과 성과 개선에 대한 관심을 보여줍니다.",
+      globalSales: "외국어 활용, 거래처 소통, 조율 및 성과 목표 수용 가능성을 보여줍니다.",
+      operation: "문서 정리, 일정 관리, 실무 운영과 조율 업무에 대한 적합성을 보여줍니다."
+    };
+
+    const topJobComments = {
+      content: ["현재 결과에서는 SNS, 콘텐츠, 트렌드, 사람들의 반응을 관찰하는 일과의 적합성이 높게 나타납니다.", "콘텐츠 마케팅은 단순히 예쁜 이미지를 만드는 일이 아니라, 타깃에게 어떤 메시지를 어떤 형식으로 전달할지 기획하고 실행하는 직무입니다.", "카드뉴스, 숏폼 영상, SNS 게시물, 콘텐츠 기획안 등을 통해 직무 이해도와 실행력을 보여주는 것이 중요합니다.", "포트폴리오에는 결과물뿐 아니라 기획 의도, 타깃, 제작 과정, 반응 데이터, 개선점을 함께 정리하는 것이 좋습니다.", "상담 전에는 실제로 만들어본 콘텐츠와 그 과정에서 느낀 점을 정리해보면 좋습니다."],
+      brand: ["현재 결과에서는 브랜드 이미지, 소비자 취향, 시장 흐름, 캠페인 아이디어를 고민하는 업무와의 적합성이 높게 나타납니다.", "브랜드/기획 마케팅은 감각만으로 하는 일이 아니라 시장조사, 경쟁사 분석, 타깃 분석을 바탕으로 브랜드의 방향성과 메시지를 정리하는 직무입니다.", "포트폴리오에는 브랜드 분석, 경쟁사 분석, 타깃 고객 분석, 캠페인 또는 프로모션 제안서를 포함하는 것이 좋습니다.", "아이디어를 말로만 설명하기보다 문서와 기획안 형태로 구조화하는 연습이 중요합니다.", "상담 전에는 좋아하는 브랜드를 하나 골라 왜 좋다고 느끼는지 정리해보면 좋습니다."],
+      performance: ["현재 결과에서는 숫자와 결과 데이터를 바탕으로 문제를 분석하고 개선하는 업무와의 적합성이 높게 나타납니다.", "퍼포먼스/CRM 마케팅은 광고 성과, 고객 행동, 전환율, 재구매율 등을 분석해 더 나은 결과를 만드는 직무입니다.", "포트폴리오에는 광고 지표 분석, 엑셀 데이터 정리, GA4 기초 분석, 랜딩페이지 개선안, 고객 세분화 아이디어 등을 포함하면 좋습니다.", "분석 도구 경험이 부족하더라도 엑셀과 기본 지표부터 학습 계획을 세우면 준비 방향을 잡기 쉽습니다.", "상담 전에는 숫자 업무에 대한 부담감과 도구 학습 의지를 스스로 점검해보면 좋습니다."],
+      globalSales: ["현재 결과에서는 외국어 활용, 해외 시장, 거래처 소통, 조율 업무와의 적합성이 높게 나타납니다.", "다만 해외영업은 단순히 외국어를 사용하는 직무가 아니라, 거래처와 관계를 유지하고 견적, 발주, 납기, 클레임, 매출 목표를 관리하는 직무입니다.", "외국어 능력과 함께 커뮤니케이션, 문제 해결, 책임감, 성과 목표 수용 가능성을 함께 확인해야 합니다.", "관련 경험이 부족하다면 무역사무, 해외영업지원, 수출입관리 직무도 함께 검토할 수 있습니다.", "상담 전에는 외국어 활용 경험과 사람을 설득하거나 조율해본 사례를 정리해보면 좋습니다."],
+      operation: ["현재 결과에서는 문서 정리, 일정 관리, 운영, 조율 업무와의 적합성이 높게 나타납니다.", "영업지원/마케팅운영은 눈에 띄는 기획자 역할은 아니지만, 실무가 문제없이 돌아가도록 돕는 중요한 직무입니다.", "아직 직무 방향이 뚜렷하지 않은 경우 운영/지원 업무를 통해 실무 경험을 쌓고 이후 마케팅, 영업, 기획 중 더 맞는 방향으로 확장하는 전략도 현실적입니다.", "꼼꼼함, 문서 작성, 일정 관리 경험은 이 직무군에서 강점으로 연결될 수 있습니다.", "상담 전에는 반복적이고 정확성이 필요한 업무가 나에게 잘 맞는지 생각해보면 좋습니다."]
+    };
+
+    const reflectionQuestions = {
+      content: ["SNS나 콘텐츠 제작을 실제로 해본 경험이 있나요?", "직접 만든 콘텐츠 중 가장 반응이 좋았던 것은 무엇인가요?", "콘텐츠를 만드는 과정과 사람들의 반응을 분석하는 과정 중 어느 쪽이 더 흥미로운가요?", "좋아하는 브랜드나 계정의 콘텐츠를 분석해본 적이 있나요?", "콘텐츠 결과물을 포트폴리오로 정리한다면 어떤 자료를 넣을 수 있을까요?"],
+      brand: ["좋아하는 브랜드를 하나 고른다면, 왜 그 브랜드가 좋다고 생각하나요?", "특정 제품의 타깃 고객을 분석해본 경험이 있나요?", "아이디어를 기획서나 제안서 형태로 정리하는 일이 괜찮나요?", "시장조사나 경쟁사 분석을 해본 경험이 있나요?", "캠페인이나 프로모션을 직접 기획한다면 어떤 주제를 다뤄보고 싶나요?"],
+      performance: ["숫자나 성과 데이터를 보는 일에 부담이 있나요?", "엑셀, GA4, 광고관리자 같은 도구를 배워볼 의향이 있나요?", "광고 결과가 좋지 않을 때 원인을 찾아 개선하는 과정이 흥미로울까요?", "데이터를 정리하거나 그래프로 표현해본 경험이 있나요?", "성과를 높이기 위해 가설을 세우고 실험하는 방식이 잘 맞을까요?"],
+      globalSales: ["해외영업에서 외국어 사용보다 거래처 조율 업무가 많아도 괜찮을까요?", "거절, 납기 지연, 클레임 같은 상황을 감당할 수 있을까요?", "사람을 설득하고 관계를 유지하는 일에 흥미가 있나요?", "외국어를 실제 상황에서 사용해본 경험이 있나요?", "성과 목표나 매출 압박이 있는 환경을 어느 정도 수용할 수 있을까요?"],
+      operation: ["처음에는 운영/지원 업무부터 시작해도 괜찮을까요?", "일정 관리, 자료 정리, 문서 작성 업무가 본인에게 잘 맞는 편인가요?", "눈에 띄는 성과보다 팀의 업무가 잘 돌아가도록 돕는 역할도 괜찮나요?", "반복적이지만 정확성이 중요한 업무를 꾸준히 할 수 있을까요?", "운영 경험을 바탕으로 이후 어떤 직무로 확장하고 싶나요?"]
+    };
+
+    const portfolioGroups = [
+      { key: "contentPortfolio", name: "콘텐츠/SNS 마케팅 포트폴리오", relatedJob: "콘텐츠 마케팅", items: ["직접 제작한 카드뉴스가 있다.", "직접 제작한 숏폼 영상이 있다.", "SNS 계정을 운영해본 경험이 있다.", "게시물 기획안 또는 콘텐츠 캘린더를 작성해본 적이 있다.", "조회수, 좋아요, 댓글, 저장 수 등 반응 데이터를 정리해본 적이 있다.", "브랜드 또는 제품을 선정해 콘텐츠 개선안을 작성해본 적이 있다."] },
+      { key: "brandPortfolio", name: "브랜드/기획 마케팅 포트폴리오", relatedJob: "브랜드/기획 마케팅", items: ["브랜드 분석 자료를 만들어본 적이 있다.", "경쟁사 분석 자료를 만들어본 적이 있다.", "타깃 고객 분석 자료를 작성해본 적이 있다.", "프로모션 또는 캠페인 기획안을 작성해본 적이 있다.", "제품/서비스 콘셉트 제안서를 만들어본 적이 있다.", "브랜드 톤앤매너 분석을 해본 적이 있다."] },
+      { key: "performancePortfolio", name: "퍼포먼스/CRM 마케팅 포트폴리오", relatedJob: "퍼포먼스/CRM 마케팅", items: ["광고 성과 지표를 분석해본 적이 있다.", "클릭률, 전환율, ROAS, CPC, CPA 등의 개념을 설명할 수 있다.", "엑셀로 데이터를 정리하거나 시각화해본 적이 있다.", "GA4, 광고관리자, 네이버 키워드도구 등을 사용해본 적이 있다.", "랜딩페이지나 광고 문구 개선안을 작성해본 적이 있다.", "고객 세분화 또는 재구매 유도 아이디어를 정리해본 적이 있다."] },
+      { key: "commercePortfolio", name: "이커머스/마케팅 운영 포트폴리오", relatedJob: "영업지원/마케팅운영", items: ["상품 상세페이지 개선안을 작성해본 적이 있다.", "스마트스토어, 카페24, 쿠팡, 자사몰 등 플랫폼을 조사해본 적이 있다.", "상품 등록, 이벤트 운영, 배너 기획 등을 해본 적이 있다.", "리뷰 분석 또는 고객 문의 분석을 해본 적이 있다.", "판매 촉진 아이디어를 정리해본 적이 있다.", "운영 일정표 또는 체크리스트를 작성해본 적이 있다."] }
+    ];
+
+    function renderQuestions() {
+      const area = document.getElementById("questionArea");
+      area.innerHTML = "";
+      jobGroups.forEach(group => {
+        const box = document.createElement("div");
+        box.className = "question-group";
+        box.innerHTML = `<h3>${group.name} 성향</h3>`;
+        group.questions.forEach((question, index) => {
+          box.innerHTML += `<div class="question-row"><div class="question-text">${question}</div><select id="question_${group.key}_${index}"><option value="1">1점</option><option value="2">2점</option><option value="3" selected>3점</option><option value="4">4점</option><option value="5">5점</option></select></div>`;
+        });
+        area.appendChild(box);
+      });
+    }
+
+    function renderPortfolioItems() {
+      const area = document.getElementById("portfolioArea");
+      area.innerHTML = "";
+      portfolioGroups.forEach(group => {
+        const box = document.createElement("div");
+        box.className = "portfolio-group";
+        box.innerHTML = `<h3>${group.name}</h3>`;
+        const list = document.createElement("div");
+        list.className = "checkbox-list";
+        group.items.forEach((item, index) => {
+          const id = `portfolio_${group.key}_${index}`;
+          list.innerHTML += `<label class="checkbox-item"><input id="${id}" type="checkbox" data-group="${group.key}" data-text="${item}" /><span>${item}</span></label>`;
+        });
+        box.appendChild(list);
+        area.appendChild(box);
+      });
+    }
+
+    function getInputValue(id) { return document.getElementById(id).value.trim() || "미입력"; }
+
+    function calculateScores() {
+      return jobGroups.map(group => {
+        const total = group.questions.reduce((sum, question, index) => sum + Number(document.getElementById(`question_${group.key}_${index}`).value), 0);
+        return { key: group.key, name: group.name, score: Math.round((total / group.questions.length) * 20), interpretation: jobShortInterpretations[group.key] };
+      }).sort((a, b) => b.score - a.score);
+    }
+
+    function getPortfolioResult() {
+      const checkedItems = Array.from(document.querySelectorAll("#portfolioArea input[type='checkbox']:checked"));
+      const totalCount = checkedItems.length;
+      let level = "";
+      let levelComment = "";
+      if (totalCount <= 2) {
+        level = "준비 부족";
+        levelComment = "마케팅 직무에 대한 관심은 있을 수 있으나, 현재 포트폴리오로 보여줄 수 있는 결과물이 부족한 단계입니다. 개인 프로젝트 형태로라도 콘텐츠 제작물, 브랜드 분석, 경쟁사 분석, 캠페인 기획안 등을 준비하는 것이 좋습니다.";
+      } else if (totalCount <= 5) {
+        level = "기초 준비 단계";
+        levelComment = "마케팅 포트폴리오로 확장할 수 있는 기초 경험이 있는 단계입니다. 단순 활동 나열이 아니라 기획 의도, 과정, 결과, 느낀 점, 개선 방향을 정리하면 포트폴리오로 발전시킬 수 있습니다.";
+      } else if (totalCount <= 9) {
+        level = "포트폴리오 구성 가능";
+        levelComment = "마케팅 지원 시 활용할 수 있는 자료가 어느 정도 있는 단계입니다. 직무 방향에 맞게 자료를 선별하고, 지원 직무와 연결되는 프로젝트 중심으로 정리하면 좋습니다.";
+      } else {
+        level = "포트폴리오 적극 활용 가능";
+        levelComment = "마케팅 직무 지원 시 포트폴리오를 적극적으로 활용할 수 있는 단계입니다. 다만 자료가 많더라도 핵심 직무와 관련 없는 결과물을 모두 넣기보다, 직무 적합도가 높은 사례를 중심으로 구성하는 것이 좋습니다.";
+      }
+      const summaryByGroup = portfolioGroups.map(group => {
+        const checked = checkedItems.filter(item => item.dataset.group === group.key).map(item => item.dataset.text);
+        const unchecked = group.items.filter(item => !checked.includes(item));
+        return { name: group.name, relatedJob: group.relatedJob, checked, unchecked };
+      });
+      return { totalCount, level, levelComment, summaryByGroup };
+    }
+
+    function makeList(items, emptyText) {
+      if (!items || items.length === 0) return `<p>${emptyText}</p>`;
+      return `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
+    function getAutomaticWarnings(scores, portfolioResult) {
+      const warnings = [];
+      const experienceAndSkills = `${getInputValue("experience")} ${getInputValue("skills")}`;
+      const globalKeywords = ["외국어", "영어", "중국어", "일본어", "무역", "해외", "교환학생", "유학", "해외경험"];
+      const dataKeywords = ["엑셀", "데이터", "GA4", "광고관리자", "분석", "통계", "SQL"];
+      const globalScore = scores.find(score => score.key === "globalSales").score;
+      const performanceScore = scores.find(score => score.key === "performance").score;
+      const marketingScores = scores.filter(score => ["content", "brand", "performance"].includes(score.key));
+      const highestMarketingScore = Math.max(...marketingScores.map(score => score.score));
+      const scoreValues = scores.map(score => score.score);
+      const scoreGap = Math.max(...scoreValues) - Math.min(...scoreValues);
+      if (globalScore >= 80 && !globalKeywords.some(keyword => experienceAndSkills.includes(keyword))) warnings.push("외국어 활용 의지는 있으나 실제 업무 활용 경험은 추가 확인이 필요합니다.");
+      if (highestMarketingScore >= 80 && portfolioResult.totalCount <= 2) warnings.push("마케팅 직무는 관심과 성향만으로 준비하기보다, 실제로 기획하거나 제작해본 결과물이 중요합니다. 현재는 포트폴리오로 보여줄 자료가 부족하므로 개인 프로젝트 형태로라도 콘텐츠 제작물, 브랜드 분석, 경쟁사 분석, 캠페인 기획안 등을 준비하는 것이 좋습니다.");
+      if (performanceScore >= 80 && !dataKeywords.some(keyword => experienceAndSkills.includes(keyword))) warnings.push("분석형 마케팅 성향은 있으나 엑셀, GA4, 광고관리자 등 도구 학습 계획을 함께 세우는 것이 좋습니다.");
+      if (scoreGap <= 10) warnings.push("아직 특정 직무로 뚜렷하게 좁혀지기보다는 경험 탐색이 필요한 단계입니다. 단기적으로는 운영/지원형 직무나 실무 경험을 통해 방향을 좁히는 것이 좋습니다.");
+      return warnings;
+    }
+
+    function makeTogetherReviewText(jobName) {
+      const texts = {
+        "콘텐츠 마케팅": "콘텐츠 제작과 소비자 반응 관찰은 여러 마케팅 직무의 기본 자료가 될 수 있습니다. 실제 결과물을 만들며 직무 이해도를 확인하기 좋습니다.",
+        "브랜드/기획 마케팅": "브랜드와 타깃 고객을 이해하는 역량은 콘텐츠, 캠페인, 이커머스 운영과도 연결됩니다. 분석 자료와 제안서 형태로 정리하면 도움이 됩니다.",
+        "퍼포먼스/CRM 마케팅": "데이터 기반 사고는 광고 운영뿐 아니라 마케팅 전반의 성과 개선에 활용됩니다. 숫자와 도구 학습에 대한 부담이 낮다면 함께 검토할 가치가 있습니다.",
+        "해외영업": "외국어와 대외 커뮤니케이션에 강점이 있다면 해외영업이나 해외영업지원도 현실적인 선택지가 될 수 있습니다. 다만 조율, 납기, 클레임 대응 업무까지 수용 가능한지 확인이 필요합니다.",
+        "영업지원/마케팅운영": "운영과 지원 업무는 실무 흐름을 익히기 좋은 출발점입니다. 직무 방향이 아직 뚜렷하지 않은 경우 경험을 통해 마케팅, 영업, 기획 중 맞는 방향을 찾는 경로가 될 수 있습니다."
+      };
+      return texts[jobName] || "해당 직무는 함께 검토해볼 수 있습니다.";
+    }
+
+    function makeFinalMessage(topJob, scores) {
+      const marketingTop = scores.slice(0, 3).some(score => ["content", "brand", "performance"].includes(score.key));
+      const globalTop = scores.slice(0, 3).some(score => score.key === "globalSales");
+      let message = `현재 결과만 보면 ${topJob.name} 직무와의 적합도가 가장 높게 나타납니다. 다만 이 결과는 확정이 아니라 상담을 위한 참고자료입니다. 앞으로는 관련 경험을 작게라도 만들어보면서 실제 업무와 맞는지 확인해보는 과정이 필요합니다.`;
+      if (marketingTop) message += " 특히 마케팅 직무는 관심과 성향뿐 아니라 포트폴리오가 중요합니다. 따라서 지원 전까지 직무 방향에 맞는 콘텐츠 제작물, 브랜드 분석, 캠페인 기획안, 광고 지표 분석 자료 등을 최소 2~3개 이상 준비하는 것이 좋습니다.";
+      if (globalTop) message += " 해외영업은 외국어 실력뿐 아니라 거래처 대응, 납기 조율, 문제 해결, 성과 목표 수용 가능성이 함께 요구됩니다. 따라서 외국어 활용 경험과 커뮤니케이션 사례를 함께 정리하는 것이 좋습니다.";
+      message += " 이 결과지는 PDF로 저장한 뒤 상담자에게 제출해 주세요.";
+      return message;
+    }
+
+    function generateResult() {
+      const scores = calculateScores();
+      const portfolioResult = getPortfolioResult();
+      const warnings = getAutomaticWarnings(scores, portfolioResult);
+      const topJob = scores[0];
+      const secondAndThird = scores.slice(1, 3);
+      const checkedSummary = portfolioResult.summaryByGroup.map(group => `<h4>${group.name}</h4>${makeList(group.checked, "체크된 항목이 없습니다.")}`).join("");
+      const shortageSummary = portfolioResult.summaryByGroup.map(group => `<h4>${group.name}</h4>${makeList(group.unchecked.slice(0, 3), "현재 주요 항목이 충분히 체크되었습니다.")}`).join("");
+      const portfolioDirection = portfolioResult.summaryByGroup.map(group => `<li><strong>${group.relatedJob}</strong>: ${group.name} 항목 중 체크된 내용은 ${group.checked.length}개입니다. 지원 직무와 연결되는 자료를 중심으로 기획 의도, 과정, 결과, 개선점을 정리하면 좋습니다.</li>`).join("");
+      document.getElementById("resultPaper").innerHTML = `<h2>마케팅·영업 직무 적합도 탐색 결과지</h2><p>학생 본인이 작성한 성향, 경험, 포트폴리오 준비도 기반 자기점검 결과입니다.</p><h3>1. 기본 정보 요약</h3><table class="summary-table"><tr><th>이름</th><td>${getInputValue("studentName")}</td></tr><tr><th>전공 또는 수강 과정</th><td>${getInputValue("majorCourse")}</td></tr><tr><th>현재 고민 중인 직무</th><td>${getInputValue("consideringJob")}</td></tr><tr><th>보유 경험</th><td>${getInputValue("experience")}</td></tr><tr><th>보유 역량</th><td>${getInputValue("skills")}</td></tr><tr><th>피하고 싶은 업무</th><td>${getInputValue("avoidWork")}</td></tr><tr><th>꼭 하고 싶은 업무 또는 관심 업무</th><td>${getInputValue("wantWork")}</td></tr><tr><th>선호하는 업무 방식</th><td>${getInputValue("workStyle")}</td></tr></table><h3>2. 직무 적합도 순위</h3><table><thead><tr><th>순위</th><th>직무군</th><th>적합도 점수</th><th>해석</th></tr></thead><tbody>${scores.map((score, index) => `<tr><td>${index + 1}위</td><td>${score.name}</td><td>${score.score}점</td><td>${score.interpretation}</td></tr>`).join("")}</tbody></table><h3>3. 직무 적합도 막대 그래프</h3>${scores.map(score => `<div class="bar-row"><div class="bar-label">${score.name}</div><div class="bar-track"><div class="bar-fill" style="width:${score.score}%"></div></div><div class="bar-score">${score.score}점</div></div>`).join("")}<h3>4. 나의 1순위 직무 해석</h3><div class="comment-box">${topJobComments[topJob.key].map(sentence => `<p>${sentence}</p>`).join("")}</div><h3>5. 함께 검토해볼 수 있는 직무</h3>${secondAndThird.map(job => `<div class="comment-box"><h4>${job.name}</h4><p>${makeTogetherReviewText(job.name)}</p></div>`).join("")}<h3>6. 마케팅 포트폴리오 준비도 결과</h3><table><tr><th>전체 체크 개수</th><td>${portfolioResult.totalCount}개</td></tr><tr><th>포트폴리오 준비도 단계</th><td>${portfolioResult.level}</td></tr></table><div class="comment-box"><h4>나의 포트폴리오 준비도 해석</h4><p>${portfolioResult.levelComment}</p></div><h4>체크된 항목 요약</h4>${checkedSummary}<h4>부족한 항목 추천</h4>${shortageSummary}<h4>직무별 포트폴리오 보완 방향</h4><ul>${portfolioDirection}</ul><h3>7. 추가로 확인해볼 점</h3>${warnings.length > 0 ? warnings.map(warning => `<div class="warning-box">${warning}</div>`).join("") : `<div class="comment-box">현재 입력값 기준으로 별도 주의 코멘트는 없습니다. 다만 실제 상담에서는 경험의 깊이와 실행 사례를 함께 확인하는 것이 좋습니다.</div>`}<h3>8. 상담 전 생각해볼 질문</h3>${makeList(reflectionQuestions[topJob.key], "추가 질문이 없습니다.")}<h3>9. 최종 안내</h3><div class="comment-box"><p>${makeFinalMessage(topJob, scores)}</p></div><div class="final-note">본 결과는 직무를 확정하기 위한 검사가 아니라 상담을 위한 참고자료입니다. 실제 직무 선택은 경험, 역량, 채용시장, 선호 업무환경을 함께 고려해 결정해야 합니다.</div>`;
+      document.getElementById("resultSection").style.display = "block";
+      document.getElementById("resultSection").scrollIntoView({ behavior: "smooth" });
+    }
+
+    function savePdf() {
+      const resultPaper = document.getElementById("resultPaper");
+      if (typeof html2pdf !== "undefined") {
+        html2pdf().set({ margin: 8, filename: "마케팅_영업_직무_적합도_탐색_결과지.pdf", image: { type: "jpeg", quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: "mm", format: "a4", orientation: "portrait" } }).from(resultPaper).save();
+      } else {
+        alert("PDF 저장 기능을 불러오지 못했습니다. 인쇄 창에서 PDF로 저장해 주세요.");
+        window.print();
+        /* CDN이 작동하지 않을 경우 대체 방식: window.print(); 브라우저 인쇄 창에서 'PDF로 저장'을 선택하면 됩니다. */
+      }
+    }
+
+    function copyResult() {
+      const resultText = document.getElementById("resultPaper").innerText;
+      navigator.clipboard.writeText(resultText).then(() => alert("결과 전체가 복사되었습니다.")).catch(() => {
+        const textarea = document.createElement("textarea");
+        textarea.value = resultText;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        alert("결과 전체가 복사되었습니다.");
+      });
+    }
+
+    function resetForm() {
+      if (!confirm("입력값과 결과를 모두 초기화할까요?")) return;
+      document.querySelectorAll("input[type='text'], textarea").forEach(input => input.value = "");
+      document.querySelectorAll("select").forEach(select => select.value = "3");
+      document.querySelectorAll("input[type='checkbox']").forEach(checkbox => checkbox.checked = false);
+      document.getElementById("resultPaper").innerHTML = "";
+      document.getElementById("resultSection").style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    renderQuestions();
+    renderPortfolioItems();
+  </script>
+</body>
+</html>
